@@ -1,0 +1,20 @@
+{
+	"name": "2_explore_calender_data",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/dicovery"
+		},
+		"content": {
+			"query": "select * FROM\nOPENROWSET \n(\n    BULK 'calendar.csv',\n    DATA_SOURCE ='nyc_taxi_data_raw',\n    FORMAT ='CSV',\n    PARSER_VERSION ='2.0',\n    HEADER_ROW =TRUE\n)as cal;\n\n\nEXEC sp_describe_first_result_set N'SELECT\n    *\nFROM\n    OPENROWSET(\n    BULK ''calendar.csv'',\n    DATA_SOURCE =''nyc_taxi_data_raw'',\n    FORMAT =''CSV'',\n    PARSER_VERSION = ''2.0''\n) AS [result]'",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discovery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

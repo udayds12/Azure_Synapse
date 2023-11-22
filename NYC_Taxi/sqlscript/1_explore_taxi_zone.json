@@ -1,0 +1,20 @@
+{
+	"name": "1_explore_taxi_zone",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/dicovery"
+		},
+		"content": {
+			"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n    BULK 'https://synapadls1.dfs.core.windows.net/nyc-taxidata/raw/taxi_zone.csv',\n    FORMAT = 'CSV',\n    PARSER_VERSION = '2.0'\n) AS [result]\n\n\n    ---------------------------------\n--abfss protocol container names comes first\nSELECT TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'abfss://nyc-taxidata@synapadls1.dfs.core.windows.net/raw/taxi_zone.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW =TRUE,\n        FIELDTERMINATOR =',',\n        ROWTERMINATOR ='\\n'\n    ) AS [result]\n\n---------------------------------------------------------------------\n--Examine the datatypes of the columns\nEXEC sp_describe_first_result_set N'SELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n    BULK ''https://synapadls1.dfs.core.windows.net/nyc-taxidata/raw/taxi_zone.csv'',\n    FORMAT = ''CSV'',\n    PARSER_VERSION = ''2.0''\n) AS [result]'\n\nSELECT MAX(len(locationID)) len_LocationID,\nMAX(len(Borough)) as len_Borough,\nMAX(len(Zone)) as len_zone,\nMAX(len(service_zone)) as len_servicezone  \nFROM\n    OPENROWSET(\n        BULK 'abfss://nyc-taxidata@synapadls1.dfs.core.windows.net/raw/taxi_zone.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW =TRUE,\n        FIELDTERMINATOR =',',\n        ROWTERMINATOR ='\\n'\n) AS [result]\n\n\n----------------------------------\n--select name,collation_name from sys.databases\nSELECT* \nFROM\n    OPENROWSET(\n        BULK 'abfss://nyc-taxidata@synapadls1.dfs.core.windows.net/raw/taxi_zone.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW =TRUE,\n        FIELDTERMINATOR =',',\n        ROWTERMINATOR ='\\n'\n)WITH\n(locationID SMALLINT,\nBorough VARCHAR(15),\nZone VARCHAR(50),\nService_zone VARCHAR(15)\n\n\n) AS [result]\n\n\nCREATE DATABASE nyc_taxi_discovery\n\nuse nyc_taxi_discovery\n\n\nSELECT* \nFROM\n    OPENROWSET(\n        BULK 'abfss://nyc-taxidata@synapadls1.dfs.core.windows.net/raw/taxi_zone.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        FIELDTERMINATOR =',',\n        ROWTERMINATOR ='\\n'\n)WITH\n(\nBorough VARCHAR(15) 2,\nZone VARCHAR(50) 1\n) AS [result]\n\n---------\n--create external data source\nCREATE EXTERNAL DATA SOURCE nyc_taxi_data_raw\nWITH(\n    LOCATION = 'abfss://nyc-taxidata@synapadls1.dfs.core.windows.net/raw'\n)\n\n----using external source\nSELECT* \nFROM\n    OPENROWSET(\n        BULK 'taxi_zone.csv',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        FIELDTERMINATOR =',',\n        ROWTERMINATOR ='\\n'\n)WITH\n(\nBorough VARCHAR(15) 2,\nZone VARCHAR(50) 1\n) AS [result]\n\n---drop EXTERNAL DATA SOURCE nyc_taxi_data\n\n---select name, location from sys.external_data_sources  -- to know location",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discovery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

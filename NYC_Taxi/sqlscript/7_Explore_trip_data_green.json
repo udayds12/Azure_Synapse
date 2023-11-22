@@ -1,0 +1,20 @@
+{
+	"name": "7_Explore_trip_data_green",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/dicovery"
+		},
+		"content": {
+			"query": "",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
